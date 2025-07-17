@@ -1,33 +1,70 @@
 from speedtest import Speedtest
+from speedtest import ConfigRetrievalError
 import time
 import sys
+import pyfiglet
+from tqdm import tqdm
+
+NAME = "Speed  test"
+
 
 def speed_test():
     try:
-        inet = Speedtest()
-        timer = time.time()
-        download = float(str(inet.download())[0:2] + "." + str(round(inet.download(),2))[1]) * 0.125
-        upload = float(str(inet.upload())[0:2] + "." + str(round(inet.upload(),2))[1]) * 0.125
-        print(f"Incoming speed of {download} megabits")
-        print(f"Outgoing speed is {upload} megabits\n\n")
-        scantime = time.time() - timer
-        print(f"Internet connection speed scan completed successfully in {scantime} seconds")
-        return True
+        name = pyfiglet.figlet_format(NAME)
+        print(f"{name}\n\n")
 
-    except Exception as e:
-        print(f"error : {e}")
+        with tqdm(total=100, desc="Starting speed test", unit="%",colour="green") as pbar:
+            time.sleep(1)
+            pbar.update(10)
+
+            inet = Speedtest()
+
+            pbar.update(20)
+            time.sleep(1)
+            pbar.set_description("Testing download speed")
+            download_speed = inet.download()
+            download = float(str(download_speed)[0:2] + "." + str(round(download_speed, 2))[1]) * 0.125
+            pbar.update(30)
+
+            pbar.set_description("Testing upload speed")
+            time.sleep(1)
+            upload_speed = inet.upload()
+            upload = float(str(upload_speed)[0:2] + "." + str(round(upload_speed, 2))[1]) * 0.125
+            pbar.update(30)
+
+            pbar.set_description("Completing test")
+            time.sleep(1)
+            pbar.update(10)
+
+            print(f"\nIncoming speed: {download:.2f} Mbps")
+            print(f"Outgoing speed: {upload:.2f} Mbps\n")
+
+
+            choice = input("\nDo you want to scan again? (y/n) >>>>").lower()
+
+            if choice == "n":
+                sys.exit(0)
+
+            elif choice == "y":
+                return speed_test()
+
+            else:
+                print("This option is not available!")
+                sys.exit(1)
+
+    except ConfigRetrievalError:
+        print("\nYou are not connected to the Internet!")
         return False
 
+    except Exception as e:
+        print(f"\nError: {e}")
+        return False
+
+
 if __name__ == "__main__":
-    speed_test()
-
-    choice = input("Do you want to scan again? (y/n) >>>>").lower()
-
-    if choice == "y":
+    try:
         speed_test()
 
-    elif choice == "n":
-        sys.exit(0)
-
-    else:
-        print("This option is not available!")
+    except Exception as e:
+        print(f"\nError: {e}")
+        sys.exit(1)
