@@ -12,6 +12,7 @@ def speed_test():
     try:
         name = pyfiglet.figlet_format(NAME)
         print(f"{name}\n\n")
+        time.sleep(3)
 
         with tqdm(total=100, desc="Starting speed test", unit="%",colour="green") as pbar:
             time.sleep(1)
@@ -31,10 +32,9 @@ def speed_test():
             upload_speed = inet.upload()
             upload = float(str(upload_speed)[0:2] + "." + str(round(upload_speed, 2))[1]) * 0.125
             pbar.update(30)
-
-            pbar.set_description("Completing test")
             time.sleep(1)
             pbar.update(10)
+            pbar.close()
 
             print(f"\nIncoming speed: {download:.2f} Mbps")
             print(f"Outgoing speed: {upload:.2f} Mbps\n")
@@ -46,6 +46,7 @@ def speed_test():
                 sys.exit(0)
 
             elif choice == "y":
+                print("\n\n")
                 return speed_test()
 
             else:
