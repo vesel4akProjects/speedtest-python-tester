@@ -7,12 +7,13 @@ from tqdm import tqdm
 
 NAME = "Speed  test"
 
+name = pyfiglet.figlet_format(NAME)
+print(f"{name}\n\n")
+time.sleep(3)
+
 
 def speed_test():
-    try:
-        name = pyfiglet.figlet_format(NAME)
-        print(f"{name}\n\n")
-        time.sleep(3)
+    try:
 
         with tqdm(total=100, desc="Starting speed test", unit="%",colour="green") as pbar:
             time.sleep(1)
